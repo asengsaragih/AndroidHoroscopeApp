@@ -1,7 +1,10 @@
 package com.suncode.horoscope.base;
 
+import java.util.ArrayList;
+
 public class Constant {
-    public static final String BASE_URL = "https://aztro.sameerkumar.website";
+    public static final String BASE_URL_HOROSCOPE = "https://aztro.sameerkumar.website";
+    public static final String BASE_URL_IMAGE = "https://raw.githubusercontent.com/";
 
     public static final String SIGN_ARIES = "aries";
     public static final String SIGN_TAURUS = "taurus";
@@ -15,6 +18,8 @@ public class Constant {
     public static final String SIGN_CAPRICORN = "capricorn";
     public static final String SIGN_AQUARIUS = "aquarius";
     public static final String SIGN_PISCES = "pisces";
+
+    public static final String[] SIGNS_ARRAY = {"aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"};
 
     public static final String DAY_TODAY = "today";
     public static final String DAY_TOMORROW = "tomorrow";
