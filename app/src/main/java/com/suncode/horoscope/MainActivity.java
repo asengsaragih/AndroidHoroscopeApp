@@ -1,128 +1,78 @@
 package com.suncode.horoscope;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.view.WindowManager;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.suncode.horoscope.base.Session;
-import com.suncode.horoscope.helper.ApiClient;
-import com.suncode.horoscope.model.Horoscope;
-import com.suncode.horoscope.model.Image;
-import com.suncode.horoscope.service.ApiService;
+import com.suncode.horoscope.adapter.HoroscopeListAdapter;
+import com.suncode.horoscope.base.Constant;
+import com.suncode.horoscope.model.HoroscopeCollection;
 
 import java.lang.reflect.Array;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.suncode.horoscope.base.Constant.DAY_TODAY;
-import static com.suncode.horoscope.base.Constant.DAY_TOMORROW;
-import static com.suncode.horoscope.base.Constant.SIGN_SAGITTARIUS;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private ApiService mHoroscopeService;
-    private ApiService mImageService;
-    private Session mSession;
+    public static final String TAG = "CHECKTAG";
 
-    private ImageView mToolbarImageview;
-    private ProgressBar mProgressbar;
+    private RecyclerView mHoroscopeRecycleview;
+    private HoroscopeListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mHoroscopeService = ApiClient.horoscopeBuild().create(ApiService.class);
-        mImageService = ApiClient.imageBuild().create(ApiService.class);
+        //hide action bar
+        getSupportActionBar().hide();
+        //transparent status/notification bar
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        //change color text in status/notification bar
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 
-        mProgressbar = findViewById(R.id.progress_main);
-        mToolbarImageview = findViewById(R.id.toolbar_thumbnails_main);
+        mHoroscopeRecycleview = findViewById(R.id.recycleview_horoscope);
 
-        mSession = new Session(this);
+        showHoroscopeList();
+    }
 
-        if (!mSession.isTrue()) {
-            //Todo: buat intro activity
+    void showHoroscopeList() {
+        //configure recycleview data with grid
+        LinearLayoutManager layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {
+                //disable scroll in recycle view
+                return false;
+            }
+        };
+
+        mHoroscopeRecycleview.setLayoutManager(layoutManager);
+
+        mAdapter = new HoroscopeListAdapter(MainActivity.this, horoscopeData());
+        mHoroscopeRecycleview.setAdapter(mAdapter);
+    }
+
+    private List<HoroscopeCollection> horoscopeData() {
+        //set data before run application
+        List<HoroscopeCollection> data = new ArrayList<>();
+
+        for (int i = 0; i < 12; i++) {
+            HoroscopeCollection collection = new HoroscopeCollection();
+
+            collection.setIcon(getDrawable(Constant.SIGNS_ICON[i]));
+            collection.setInterval(Constant.SIGNS_INTERVAL[i]);
+            collection.setTitle(Constant.SIGNS_ARRAY[i]);
+
+            data.add(collection);
         }
 
-        getData();
-        setToolbar();
-    }
-
-    private void setToolbar() {
-        Call<Image> call = mImageService.getImage();
-        call.enqueue(new Callback<Image>() {
-            @Override
-            public void onResponse(Call<Image> call, Response<Image> response) {
-
-                Image data = response.body();
-                Image.Horoscope[] horoscopes = data.getHoroscope();
-
-                for (int i = 0; i < horoscopes.length; i++) {
-                    if (horoscopes[i].getUrl().contains(mSession.getUserHoroscope())) {
-
-                        Glide.with(getApplicationContext())
-                                .load(horoscopes[i].getUrl())
-                                .listener(new RequestListener<Drawable>() {
-                                    @Override
-                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                        mProgressbar.setVisibility(View.GONE);
-                                        return false;
-                                    }
-
-                                    @Override
-                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                        mProgressbar.setVisibility(View.GONE);
-                                        return false;
-                                    }
-                                })
-                                .diskCacheStrategy(DiskCacheStrategy.DATA)
-                                .into(mToolbarImageview);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Image> call, Throwable t) {
-
-            }
-        });
-    }
-
-    private void getData() {
-        Call<Horoscope> call = mHoroscopeService.getData(mSession.getUserHoroscope(), DAY_TODAY);
-
-        call.enqueue(new Callback<Horoscope>() {
-            @Override
-            public void onResponse(Call<Horoscope> call, Response<Horoscope> response) {
-                Horoscope horoscope = response.body();
-
-                Log.d("CHECKTAG", horoscope.getDateRange());
-                Log.d("CHECKTAG", horoscope.getCurrentDate());
-                Log.d("CHECKTAG", horoscope.getDescription());
-                Log.d("CHECKTAG", horoscope.getCompatibility());
-                Log.d("CHECKTAG", horoscope.getMood());
-                Log.d("CHECKTAG", horoscope.getColor());
-                Log.d("CHECKTAG", horoscope.getLuckyNumber());
-                Log.d("CHECKTAG", horoscope.getLuckyTime());
-            }
-
-            @Override
-            public void onFailure(Call<Horoscope> call, Throwable t) {
-
-            }
-        });
+        return data;
     }
 }
