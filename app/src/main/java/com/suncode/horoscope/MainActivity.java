@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -55,7 +56,16 @@ public class MainActivity extends AppCompatActivity {
 
         mHoroscopeRecycleview.setLayoutManager(layoutManager);
 
-        mAdapter = new HoroscopeListAdapter(MainActivity.this, horoscopeData());
+        mAdapter = new HoroscopeListAdapter(MainActivity.this, horoscopeData(), new HoroscopeListAdapter.ClickHandler() {
+            @Override
+            public void onClickListener(String name) {
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("HOROSCOPE_NAME", name);
+
+                startActivity(intent);
+            }
+        });
+
         mHoroscopeRecycleview.setAdapter(mAdapter);
     }
 

@@ -15,17 +15,18 @@ import com.bumptech.glide.Glide;
 import com.suncode.horoscope.R;
 import com.suncode.horoscope.model.HoroscopeCollection;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class HoroscopeListAdapter extends RecyclerView.Adapter<HoroscopeListAdapter.ListHolder> {
 
     private Context mContext;
     private List<HoroscopeCollection> mData;
+    private ClickHandler mClickHandler;
 
-    public HoroscopeListAdapter(Context mContext, List<HoroscopeCollection> mData) {
+    public HoroscopeListAdapter(Context mContext, List<HoroscopeCollection> mData, ClickHandler mClickHandler) {
         this.mContext = mContext;
         this.mData = mData;
+        this.mClickHandler = mClickHandler;
     }
 
     @NonNull
@@ -47,6 +48,10 @@ public class HoroscopeListAdapter extends RecyclerView.Adapter<HoroscopeListAdap
         Glide.with(mContext)
                 .load(icon)
                 .into(holder.iconImageview);
+
+        holder.baseConstraint.setOnClickListener(v -> {
+            mClickHandler.onClickListener(title);
+        });
     }
 
     @Override
@@ -59,6 +64,7 @@ public class HoroscopeListAdapter extends RecyclerView.Adapter<HoroscopeListAdap
         final ImageView iconImageview;
         final TextView titleTextview;
         final TextView intervalTextview;
+        final View baseConstraint;
 
         public ListHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +72,13 @@ public class HoroscopeListAdapter extends RecyclerView.Adapter<HoroscopeListAdap
             iconImageview = itemView.findViewById(R.id.imageview_list_item_icon);
             titleTextview = itemView.findViewById(R.id.textView_list_item_name);
             intervalTextview = itemView.findViewById(R.id.textView_list_item_desc);
+
+            baseConstraint = itemView.findViewById(R.id.constraintLayout_list_item_canvas);
         }
+    }
+
+
+    public interface ClickHandler {
+        void onClickListener(String name);
     }
 }
