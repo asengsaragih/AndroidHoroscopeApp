@@ -1,7 +1,19 @@
-# Android Horoscope
+# Android Horoscope App
 
-## FlatIcon License 
+Get horoscope data for today, yesterday and tommorow
 
-```html
-Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
-```
+### Preview
+<img src="https://raw.githubusercontent.com/asengsaragih/public-image/master/horoscope/main.jpeg" width="200px"/> <img src="https://raw.githubusercontent.com/asengsaragih/public-image/master/horoscope/detail.jpeg" width="200px"/>
+
+### Features
+- Get Horoscope Data
+
+### Library
+- Retrofit
+- Shimmer
+
+### Icon
+- [Flaticon](https://www.flaticon.com/)
+
+### API
+- [sameerkumar18/aztro](https://github.com/sameerkumar18/aztro)
