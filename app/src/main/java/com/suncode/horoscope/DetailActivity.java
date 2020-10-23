@@ -14,6 +14,7 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.shimmer.Shimmer;
@@ -35,6 +36,8 @@ public class DetailActivity extends AppCompatActivity {
     public static final String TAG = "CHECKTAG";
     private ApiService mApiService;
     private ShimmerFrameLayout mDetailShimmer;
+
+    private ImageView mBackButtonImageView;
 
     private Chip mTodayChip;
     private Chip mTommorowChip;
@@ -90,6 +93,10 @@ public class DetailActivity extends AppCompatActivity {
         getData(Constant.DAY_TODAY);
 
         chipClicked();
+
+        //for back button
+        mBackButtonImageView = findViewById(R.id.imagebutton_detail_back);
+        mBackButtonImageView.setOnClickListener(v -> finish());
     }
 
     private void chipClicked() {
